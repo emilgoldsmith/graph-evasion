@@ -51,7 +51,7 @@ class App extends Component {
       }
       graph.push(col);
     }
-
+    console.log(graph);
     return graph;
   }
 
@@ -120,25 +120,6 @@ class App extends Component {
   }
 
   render() {
-    const graphToRender = [];
-    for (let j = 0; j < 10; j += 1) {
-      let row = [];
-      for (let i = 0; i < 10; i += 1) {
-        if (this.state.graph[i].length > j) {
-          if (this.state.hunterPos.x === i && this.state.hunterPos.y === j) {
-            row.push(<span style={{color: 'red'}} key={`${i}-${j}`}>x</span>);
-          } else if (this.state.preyPos.x === i && this.state.preyPos.y === j) {
-            row.push(<span style={{color: 'darkOrange'}} key={`${i}-${j}`}>x</span>);
-          } else {
-            row.push('x');
-          }
-        } else {
-          row.push('o');
-        }
-      }
-      row.push(<br key={`break-row-${j}`} />);
-      graphToRender.push(row);
-    }
     return (
       <div className="App">
         <header className="App-header">
