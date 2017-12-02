@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import Board from './Board.js';
+import BoardCanvas from './Board.js';
 
 /* Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random */
 function getRandomInt(min, max) {
@@ -126,7 +126,7 @@ class App extends Component {
           <img src={logo} className="App-logo" alt="logo" />
           <h1 className="App-title">Welcome to React</h1>
         </header>
-        <Board
+        <BoardCanvas
           graph={this.state.graph}
           hunterX={this.state.hunterPos.x}
           hunterY={this.state.hunterPos.y}
