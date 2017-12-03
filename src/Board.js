@@ -20,16 +20,44 @@ class BoardCanvas extends Component {
     this.renderCanvas();
   }
 
-  componentWillUpdate() {
+  componentDidUpdate() {
     this.renderCanvas();
   }
 
   // coordinate conversion from graph to canvas
-  g2c(i, x = false) {
-    if (x) {
+  g2c(i, isX = false) {
+    if (isX) {
       return (3 * i + 1) * this.basePX;
     }
     return (2 * i + 1) * this.basePX;
+  }
+
+  // coordinate coversion from canvas to graph
+  c2g(cX, cY) {
+    for (let x = 0; x < this.dimension; x++) {
+      const col = this.props.graph[x];
+      for (let y = 0; y < col.length; y++) {
+        const canvasX = this.g2c(x, true);
+        const canvasY = this.g2c(y);
+        const d2 = (cX - canvasX) * (cX - canvasX) + (cY - canvasY) * (cY - canvasY);
+        if (d2 < this.basePX * this.basePX) {
+          return { x, y };
+        }
+      }
+    }
+    return { x : -1, y : -1};
+  }
+
+  makeMove = (event) => {
+    const rect = this.canvas.getBoundingClientRect();
+    const graphCoordinate = this.c2g(event.clientX - rect.left, event.clientY - rect.top);
+    if (graphCoordinate.x !== -1) {
+      this.props.makeMove(
+        graphCoordinate.x,
+        graphCoordinate.y,
+        this.props.huntersTurn && window.confirm("Place bomb?")
+      );
+    }
   }
 
   renderCanvas() {
@@ -39,11 +67,11 @@ class BoardCanvas extends Component {
     for (let x = 0; x < this.dimension; x++) {
       const col = this.props.graph[x];
       for (let y = 0; y < col.length; y++) {
-        const graphX = this.g2c(x, true);
-        const graphY = this.g2c(y);
-        nodes.push({ x : graphX, y : graphY, hasBomb: col[y].hasBomb });
+        const canvasX = this.g2c(x, true);
+        const canvasY = this.g2c(y);
+        nodes.push({ x : canvasX, y : canvasY, hasBomb: col[y].hasBomb });
         for (const n of col[y].neighbours) {
-          edges.push({ x1 : graphX, y1 : graphY, x2 : this.g2c(n.x, true), y2 : this.g2c(n.y)});
+          edges.push({ x1 : canvasX, y1 : canvasY, x2 : this.g2c(n.x, true), y2 : this.g2c(n.y)});
         }
       }
     }
@@ -66,7 +94,6 @@ class BoardCanvas extends Component {
     }
     // draw nodes
     ctx.font = this.font;
-    console.log(ctx.font);
     for (const node of nodes) {
       ctx.beginPath();
       if (node.x === this.g2c(this.props.hunterX, true) && node.y === this.g2c(this.props.hunterY)) {
@@ -89,6 +116,7 @@ class BoardCanvas extends Component {
       <div style={{display: 'flex', justifyContent: 'center'}}>
         <canvas
           ref={(canvas) => { this.canvas = canvas; }}
+          onClick={this.makeMove}
         >
         </canvas>
       </div>
