@@ -31,13 +31,13 @@ class App extends Component {
       const numRows = getRandomInt(minRows, maxRows);
       for (let j = 0; j < numRows; j += 1) {
         let neighbours = [];
-        if (j > 0 && getRandomInt(0, 1) === 0) {
+        if (j > 0) {
           neighbours.push({ x: i, y: j - 1 });
           col[j - 1].neighbours.push({ x: i, y: j });
         }
         if (i > 0) {
           graph[i - 1] = graph[i - 1].map((node, index) => {
-            if (getRandomInt(0, 1) === 0) {
+            if (getRandomInt(0, 4) === 0) {
               neighbours.push({ x: i - 1, y: index });
               return {
                 ...node,
