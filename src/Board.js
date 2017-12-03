@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 class BoardCanvas extends Component {
   constructor() {
     super();
-    this.basePX = 30;
+    this.basePX = 35;
     this.lineWidth = 1;
     this.colors = {
       bg : '#ffffff',
@@ -25,7 +25,10 @@ class BoardCanvas extends Component {
   }
 
   // coordinate conversion from graph to canvas
-  g2c(i) {
+  g2c(i, x = false) {
+    if (x) {
+      return (3 * i + 1) * this.basePX;
+    }
     return (2 * i + 1) * this.basePX;
   }
 
@@ -36,18 +39,18 @@ class BoardCanvas extends Component {
     for (let x = 0; x < this.dimension; x++) {
       const col = this.props.graph[x];
       for (let y = 0; y < col.length; y++) {
-        const graphX = this.g2c(x);
+        const graphX = this.g2c(x, true);
         const graphY = this.g2c(y);
         nodes.push({ x : graphX, y : graphY, hasBomb: col[y].hasBomb });
         for (const n of col[y].neighbours) {
-          edges.push({ x1 : graphX, y1 : graphY, x2 : this.g2c(n.x), y2 : this.g2c(n.y)});
+          edges.push({ x1 : graphX, y1 : graphY, x2 : this.g2c(n.x, true), y2 : this.g2c(n.y)});
         }
       }
     }
 
     const ctx = this.canvas.getContext('2d');
     // set canvas size
-    this.canvas.width = this.basePX * this.dimension * 2;
+    this.canvas.width = this.basePX * this.dimension * 3;
     this.canvas.height = this.basePX * this.dimension * 2;
     // draw background
     ctx.fillStyle = this.colors.bg;
@@ -66,21 +69,18 @@ class BoardCanvas extends Component {
     console.log(ctx.font);
     for (const node of nodes) {
       ctx.beginPath();
-      if (node.x === this.g2c(this.props.hunterX) && node.y === this.g2c(this.props.hunterY)) {
+      if (node.x === this.g2c(this.props.hunterX, true) && node.y === this.g2c(this.props.hunterY)) {
         ctx.fillStyle = this.colors.h;
-      } else if (node.x === this.g2c(this.props.preyX) && node.y === this.g2c(this.props.preyY)) {
+      } else if (node.x === this.g2c(this.props.preyX, true) && node.y === this.g2c(this.props.preyY)) {
         ctx.fillStyle = this.colors.p;
+      } else if (node.hasBomb) {
+        ctx.fillStyle = this.colors.b;
       } else {
         ctx.fillStyle = this.colors.bg;
       }
       ctx.arc(node.x, node.y, this.basePX / 2, 0, 2 * Math.PI, false);
       ctx.fill();
       ctx.stroke();
-      // draw bomb
-      ctx.fillStyle = this.colors.fg;
-      if (node.hasBomb) {
-        ctx.fillText('B', node.x, node.y);
-      }
     }
   }
 
