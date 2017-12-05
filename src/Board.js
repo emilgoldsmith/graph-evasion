@@ -17,7 +17,7 @@ class BoardCanvas extends Component {
     this.dimension = this.props.graph.length;
     // get appropriate basePX based on width
     const scale = 0.9;
-    this.basePX = Math.floor(scale * window.innerWidth / (this.dimension * 3));
+    this.basePX = Math.floor(scale * this.canvas.parentNode.clientWidth / (this.dimension * 3));
     // set canvas size
     this.canvas.width = this.basePX * this.dimension * 3;
     this.canvas.height = this.basePX * this.dimension * 2;
@@ -151,7 +151,7 @@ class BoardCanvas extends Component {
             </span>
           </div>
         </header>
-        <div style={{display: 'flex', justifyContent: 'center'}}>
+        <div style={{display: 'flex', justifyContent: 'center', height: '100%', width: '100%'}}>
           <canvas
             ref={(canvas) => { this.canvas = canvas; }}
             onClick={this.makeMove}
