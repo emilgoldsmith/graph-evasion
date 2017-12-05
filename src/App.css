@@ -1,9 +1,20 @@
-header {
+.gameHeader {
+  text-align: center;
   margin-bottom: 30px;
 }
 
-h1 {
-  text-align: center;
+.gameHeader h1 {
+  font-size: 25px;
+  padding: 5px;
+  margin: 0;
+}
+
+.gameHeader h2 {
+  font-size: 18px;
+  font-weight: normal;
+  line-height: 25px;
+  padding: 5px;
+  margin: 0;
 }
 
 .container, .info {
