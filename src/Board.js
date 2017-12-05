@@ -25,11 +25,14 @@ class BoardCanvas extends Component {
   }
 
   // coordinate conversion from graph to canvas
-  g2c(i, isX = false) {
-    if (isX) {
-      return (3 * i + 1) * this.basePX;
-    }
-    return (2 * i + 1) * this.basePX;
+  g2cX(x) {
+    return (3 * x + 1) * this.basePX;
+  }
+
+  g2cY(y, colSize) {
+    const gap = (this.dimension - colSize) * 2 * this.basePX;
+    const unitGap = gap / (colSize + 1);
+    return (2 * y + 1) * this.basePX + (y + 1) * unitGap;
   }
 
   // coordinate coversion from canvas to graph
@@ -37,8 +40,8 @@ class BoardCanvas extends Component {
     for (let x = 0; x < this.dimension; x++) {
       const col = this.props.graph[x];
       for (let y = 0; y < col.length; y++) {
-        const canvasX = this.g2c(x, true);
-        const canvasY = this.g2c(y);
+        const canvasX = this.g2cX(x);
+        const canvasY = this.g2cY(y, col.length);
         const d2 = (cX - canvasX) * (cX - canvasX) + (cY - canvasY) * (cY - canvasY);
         if (d2 < this.basePX * this.basePX) {
           return { x, y };
@@ -67,11 +70,14 @@ class BoardCanvas extends Component {
     for (let x = 0; x < this.dimension; x++) {
       const col = this.props.graph[x];
       for (let y = 0; y < col.length; y++) {
-        const canvasX = this.g2c(x, true);
-        const canvasY = this.g2c(y);
+        const canvasX = this.g2cX(x);
+        const canvasY = this.g2cY(y, col.length);
         nodes.push({ x : canvasX, y : canvasY, hasBomb: col[y].hasBomb });
         for (const n of col[y].neighbours) {
-          edges.push({ x1 : canvasX, y1 : canvasY, x2 : this.g2c(n.x, true), y2 : this.g2c(n.y)});
+          edges.push({
+            x1 : canvasX, y1 : canvasY,
+            x2 : this.g2cX(n.x), y2 : this.g2cY(n.y, this.props.graph[n.x].length)
+          });
         }
       }
     }
@@ -96,9 +102,11 @@ class BoardCanvas extends Component {
     ctx.font = this.font;
     for (const node of nodes) {
       ctx.beginPath();
-      if (node.x === this.g2c(this.props.hunterX, true) && node.y === this.g2c(this.props.hunterY)) {
+      const hunterColSize = this.props.graph[this.props.hunterX].length;
+      const preyColSize = this.props.graph[this.props.preyX].length;
+      if (node.x === this.g2cX(this.props.hunterX) && node.y === this.g2cY(this.props.hunterY, hunterColSize)) {
         ctx.fillStyle = this.colors.h;
-      } else if (node.x === this.g2c(this.props.preyX, true) && node.y === this.g2c(this.props.preyY)) {
+      } else if (node.x === this.g2cX(this.props.preyX) && node.y === this.g2cY(this.props.preyY, preyColSize)) {
         ctx.fillStyle = this.colors.p;
       } else if (node.hasBomb) {
         ctx.fillStyle = this.colors.b;
