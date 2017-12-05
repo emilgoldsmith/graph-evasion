@@ -3,6 +3,7 @@ import './App.css';
 import BoardCanvas from './Board.js';
 import Initialize from './Initialize.js';
 import TitleRule from './TitleRule.js';
+import GameOver from './GameOver.js';
 
 /* Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random */
 function getRandomInt(min, max) {
@@ -27,6 +28,10 @@ class App extends Component {
       numCols: null,
       minRows: null,
       maxRows: null,
+      player1Score: 0,
+      player2Score: 0,
+      secondGameStarted: false,
+      intermediateState: false,
     };
   }
 
@@ -59,6 +64,30 @@ class App extends Component {
     }
     return graph;
   }
+
+  finishGame = () => {
+    if (!this.state.secondGameStarted) {
+      const newGraph = this.state.graph.map(row => {
+        return row.map(node => ({ ...node, hasBomb: false }));
+      });
+      return {
+        graph: newGraph,
+        player1Score: this.state.numMoves + this.state.huntersTurn,
+        numMoves: 0,
+        secondGameStarted: true,
+        hunterPos: { x: 0, y: 0 },
+        preyPos: { x: newGraph.length - 1, y: newGraph[newGraph.length - 1].length - 1 },
+        huntersTurn: true,
+        intermediateState: true,
+      };
+    } else {
+      return {
+        gameOver: true,
+        player2Score: this.state.numMoves + this.state.huntersTurn,
+        intermediateState: true,
+      };
+    }
+  };
 
   /**
    * This function return false if the move was invalid (and therefore wasn't made)
@@ -100,10 +129,10 @@ class App extends Component {
       const hunter = state.hunterPos;
       const prey = state.preyPos;
       if (hunter.x === prey.x && hunter.y === prey.y) {
-        return { gameOver: true };
+        return this.finishGame();
       }
       if (!state.huntersTurn && state.graph[prey.x][prey.y].hasBomb) {
-        return { gameOver: true };
+        return this.finishGame();
       }
       if (state.huntersTurn && state.graph[hunter.x][hunter.y].hasBomb) {
         const pickUpBomb = window.confirm("would you like to pick up the bomb?");
@@ -120,8 +149,13 @@ class App extends Component {
       }
       return {};
     });
-    this.setState(state => ({ huntersTurn: !state.huntersTurn }));
-    this.setState(state => ({ numMoves: state.numMoves + 1 }));
+    this.setState(state => {
+      if (state.intermediateState) return { intermediateState: false };
+      return {
+        numMoves: state.numMoves + state.huntersTurn,
+        huntersTurn: !state.huntersTurn,
+      };
+    });
     return true;
   }
 
@@ -152,28 +186,53 @@ class App extends Component {
       this.state.preyPos !== null
     );
 
-    const currentPlayer = this.state.huntersTurn ? this.state.player1Name : this.state.player2Name;
+    let hunterName, preyName, currentName;
+    if (!this.state.secondGameStarted) {
+      hunterName = this.state.player1Name;
+      preyName = this.state.player2Name;
+      currentName = this.state.huntersTurn ? hunterName : preyName;
+    } else {
+      hunterName = this.state.player2Name;
+      preyName = this.state.player1Name;
+      currentName = this.state.huntersTurn ? hunterName : preyName;
+    }
+
+    let mainComponent;
+    if (this.state.gameOver) {
+      mainComponent = (
+        <GameOver
+          player1Name={this.state.player1Name}
+          player2Name={this.state.player2Name}
+          player1Score={this.state.player1Score}
+          player2Score={this.state.player2Score}
+        />
+      );
+    } else if (isInitialized) {
+      mainComponent = (
+        <BoardCanvas
+          graph={this.state.graph}
+          hunterX={this.state.hunterPos.x}
+          hunterY={this.state.hunterPos.y}
+          preyX={this.state.preyPos.x}
+          preyY={this.state.preyPos.y}
+          makeMove={this.makeMove}
+          huntersTurn={this.state.huntersTurn}
+          numBombs={this.state.numBombs}
+          numMoves={this.state.numMoves}
+          gameOver={this.state.gameOver}
+          nameToPlay={currentName}
+          hunterName={hunterName}
+          preyName={preyName}
+        />
+      );
+    } else {
+      mainComponent = <Initialize initialize={this.initialize} />;
+    }
 
     return (
       <div className="App">
         <TitleRule />
-        {isInitialized
-          ? <BoardCanvas
-              graph={this.state.graph}
-              hunterX={this.state.hunterPos.x}
-              hunterY={this.state.hunterPos.y}
-              preyX={this.state.preyPos.x}
-              preyY={this.state.preyPos.y}
-              makeMove={this.makeMove}
-              huntersTurn={this.state.huntersTurn}
-              gameOver={this.state.gameOver}
-              numBombs={this.state.numBombs}
-              numMoves={this.state.numMoves}
-              gameOver={this.state.gameOver}
-              nameToPlay={currentPlayer}
-            />
-          : <Initialize initialize={this.initialize} />
-        }
+        {mainComponent}
       </div>
     );
   }

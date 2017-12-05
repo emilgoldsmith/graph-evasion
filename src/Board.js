@@ -127,11 +127,11 @@ class BoardCanvas extends Component {
         <div className="container">
           <span className="info">
             <span className="info-icon hunter"></span>
-            <span className="info-text">Hunter</span>
+            <span className="info-text">Hunter ({this.props.hunterName})</span>
           </span>
           <span className="info">
             <span className="info-icon prey"></span>
-            <span className="info-text">Prey</span>
+            <span className="info-text">Prey ({this.props.preyName})</span>
           </span>
           <span className="info">
             <span className="info-icon bomb"></span>
@@ -142,9 +142,6 @@ class BoardCanvas extends Component {
           </span>
           <span className="info">
             <span className="info-text">To Play: {this.props.nameToPlay}</span>
-          </span>
-          <span className="info">
-            <span className="info-text">{ this.props.gameOver ? 'Game over' : 'Game in progess' } </span>
           </span>
         </div>
         <div style={{display: 'flex', justifyContent: 'center', height: '100%', width: '100%'}}>
