@@ -9,6 +9,7 @@ class Initialize extends Component {
       numCols: 10,
       minRows: 3,
       maxRows: 7,
+      numBombs: 10,
     };
   }
 
@@ -17,6 +18,7 @@ class Initialize extends Component {
   handleNumColsChange = e => {e.preventDefault(); this.setState({numCols: e.target.value});};
   handleMinRowsChange = e => {e.preventDefault(); this.setState({minRows: e.target.value});};
   handleMaxRowsChange = e => {e.preventDefault(); this.setState({maxRows: e.target.value});};
+  handleNumBombsChange = e => {e.preventDefault(); this.setState({numBombs: e.target.value});};
 
   render() {
     return (
@@ -34,6 +36,13 @@ class Initialize extends Component {
           name="player2Name"
           value={this.state.player2Name}
           onChange={this.handlePlayer2NameChange}
+        />
+        Number of Bombs for hunter
+        <input
+          type="number"
+          name="numBombs"
+          value={this.state.numBombs}
+          onChange={this.handleNumBombsChange}
         />
         Number of columns in graph:
         <input

@@ -12,27 +12,30 @@ function getRandomInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min; //The maximum is inclusive and the minimum is inclusive
 }
 
+const INITIAL_STATE = {
+  graph: null,
+  hunterPos: null,
+  preyPos: null,
+  gameOver: false,
+  huntersTurn: true,
+  numBombs: null,
+  numMoves: 0,
+  player1Name: null,
+  player2Name: null,
+  numCols: null,
+  minRows: null,
+  maxRows: null,
+  player1Score: 0,
+  player2Score: 0,
+  secondGameStarted: false,
+  intermediateState: false,
+  startingBombs: null,
+};
+
 class App extends Component {
   constructor() {
     super();
-    this.state = {
-      graph: null,
-      hunterPos: null,
-      preyPos: null,
-      gameOver: false,
-      huntersTurn: true,
-      numBombs: 10,
-      numMoves: 0,
-      player1Name: null,
-      player2Name: null,
-      numCols: null,
-      minRows: null,
-      maxRows: null,
-      player1Score: 0,
-      player2Score: 0,
-      secondGameStarted: false,
-      intermediateState: false,
-    };
+    this.state = INITIAL_STATE;
   }
 
   generateGraph(numCols, minRows, maxRows) {
@@ -79,6 +82,7 @@ class App extends Component {
         preyPos: { x: newGraph.length - 1, y: newGraph[newGraph.length - 1].length - 1 },
         huntersTurn: true,
         intermediateState: true,
+        numBombs: this.state.startingBombs,
       };
     } else {
       return {
@@ -171,28 +175,13 @@ class App extends Component {
       maxRows: e.target.maxRows.value,
       hunterPos: { x: 0, y: 0 },
       preyPos: { x: newGraph.length - 1, y: newGraph[newGraph.length - 1].length - 1 },
+      startingBombs: e.target.numBombs.value,
+      numBombs: e.target.numBombs.value,
     });
   };
 
   reset = () => {
-    this.setState({
-      graph: null,
-      hunterPos: null,
-      preyPos: null,
-      gameOver: false,
-      huntersTurn: true,
-      numBombs: 10,
-      numMoves: 0,
-      player1Name: null,
-      player2Name: null,
-      numCols: null,
-      minRows: null,
-      maxRows: null,
-      player1Score: 0,
-      player2Score: 0,
-      secondGameStarted: false,
-      intermediateState: false,
-    });
+    this.setState(INITIAL_STATE);
   }
 
   render() {
@@ -204,7 +193,8 @@ class App extends Component {
       this.state.maxRows !== null &&
       this.state.graph !== null &&
       this.state.hunterPos !== null &&
-      this.state.preyPos !== null
+      this.state.preyPos !== null &&
+      this.state.startingBombs !== null
     );
 
     let hunterName, preyName, currentName;
