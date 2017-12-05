@@ -135,6 +135,7 @@ class App extends Component {
           gameOver={this.state.gameOver}
           numBombs={this.state.numBombs}
           numMoves={this.state.numMoves}
+          gameOver={this.state.gameOver}
         />
       </div>
     );
