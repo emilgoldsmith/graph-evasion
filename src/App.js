@@ -97,7 +97,7 @@ class App extends Component {
    * This function return false if the move was invalid (and therefore wasn't made)
    * and true if it was valid (and the move was therefore made)
    */
-  makeMove = (x, y, placeBomb = false) => {
+  makeMove = (x, y) => {
     if (this.state.gameOver) return false;
     const position = this.state.huntersTurn ? this.state.hunterPos : this.state.preyPos;
     const graph = this.state.graph;
@@ -109,18 +109,6 @@ class App extends Component {
       return false;
     }
     if (this.state.huntersTurn) {
-      if (placeBomb) {
-        this.setState(state => {
-          const pos = state.hunterPos;
-          const graphCopy = [ ...state.graph ];
-          graphCopy[pos.x] = [ ...graphCopy[pos.x] ];
-          graphCopy[pos.x][pos.y].hasBomb = true;
-          return {
-            graph: state.numBombs > 0 ? graphCopy : state.graph,
-            numBombs: state.numBombs - 1,
-          };
-        });
-      }
       this.setState({
         hunterPos: { x, y },
       });
@@ -138,19 +126,6 @@ class App extends Component {
       if (!state.huntersTurn && state.graph[prey.x][prey.y].hasBomb) {
         return this.finishGame();
       }
-      if (state.huntersTurn && state.graph[hunter.x][hunter.y].hasBomb) {
-        const pickUpBomb = window.confirm("would you like to pick up the bomb?");
-        if (pickUpBomb) {
-          const pos = hunter;
-          const graphCopy = [ ...state.graph ];
-          graphCopy[pos.x] = [ ...graphCopy[pos.x] ];
-          graphCopy[pos.x][pos.y].hasBomb = false;
-          return {
-            graph: graphCopy,
-            numBombs: state.numBombs + 1,
-          };
-        }
-      }
       return {};
     });
     this.setState(state => {
@@ -161,6 +136,36 @@ class App extends Component {
       };
     });
     return true;
+  }
+
+  placeBomb = () => {
+    if (this.state.numBombs > 0) {
+      this.setState(state => {
+        const pos = state.hunterPos;
+        if (state.graph[pos.x][pos.y].hasBomb) return {};
+        const graphCopy = [ ...state.graph ];
+        graphCopy[pos.x] = [ ...graphCopy[pos.x] ];
+        graphCopy[pos.x][pos.y].hasBomb = true;
+        return {
+          graph: state.numBombs > 0 ? graphCopy : state.graph,
+          numBombs: state.numBombs - 1,
+        };
+      });
+    }
+  };
+
+  pickupBomb = () => {
+    this.setState(state => {
+      const pos = state.hunterPos;
+      if (!state.graph[pos.x][pos.y].hasBomb) return {};
+      const graphCopy = [ ...state.graph ];
+      graphCopy[pos.x] = [ ...graphCopy[pos.x] ];
+      graphCopy[pos.x][pos.y].hasBomb = false;
+      return {
+        graph: graphCopy,
+        numBombs: state.numBombs + 1,
+      };
+    });
   }
 
   initialize = e => {
@@ -235,6 +240,8 @@ class App extends Component {
           nameToPlay={currentName}
           hunterName={hunterName}
           preyName={preyName}
+          placeBomb={this.placeBomb}
+          pickupBomb={this.pickupBomb}
         />
       );
     } else {

@@ -64,7 +64,6 @@ class BoardCanvas extends Component {
       this.props.makeMove(
         graphCoordinate.x,
         graphCoordinate.y,
-        this.props.huntersTurn && window.confirm("Place bomb?")
       );
     }
   }
@@ -151,6 +150,14 @@ class BoardCanvas extends Component {
           >
           </canvas>
         </div>
+        <button
+          onClick={this.props.placeBomb}
+          disabled={!(this.props.huntersTurn && this.props.numBombs > 0 && !this.props.graph[this.props.hunterX][this.props.hunterY].hasBomb)}
+        >Place Bomb</button>
+        <button
+          onClick={this.props.pickupBomb}
+          disabled={!(this.props.huntersTurn && this.props.graph[this.props.hunterX][this.props.hunterY].hasBomb)}
+        >Pickup Bomb</button>
       </div>
     )
   }
