@@ -16,8 +16,10 @@ class BoardCanvas extends Component {
   componentDidMount() {
     this.dimension = this.props.graph.length;
     // get appropriate basePX based on width
-    const scale = 0.9;
-    this.basePX = Math.floor(scale * this.canvas.parentNode.clientWidth / (this.dimension * 3));
+    const scale = 0.95;
+    const widthBased = Math.floor(scale * this.canvas.parentNode.clientWidth / (this.dimension * 3));
+    const heightBased = Math.floor(scale * window.innerHeight / (this.dimension * 2));
+    this.basePX = Math.min(widthBased, heightBased);
     // set canvas size
     this.canvas.width = this.basePX * this.dimension * 3;
     this.canvas.height = this.basePX * this.dimension * 2;
