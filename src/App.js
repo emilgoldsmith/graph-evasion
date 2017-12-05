@@ -32,41 +32,57 @@ const INITIAL_STATE = {
   startingBombs: null,
 };
 
+function validateGraph(graph) {
+  let valid = true;
+  graph.forEach((col, index) => {
+    let isConnected = false;
+    col.forEach(node => {
+      node.neighbours.forEach(neighbour => {
+        isConnected = isConnected || neighbour.x !== index;
+      });
+    });
+    valid = valid && isConnected;
+  });
+  return valid;
+}
+
+function generateGraph(numCols, minRows, maxRows) {
+  let graph = [];
+  for (let i = 0; i < numCols; i += 1) {
+    let col = [];
+    const numRows = getRandomInt(minRows, maxRows);
+    for (let j = 0; j < numRows; j += 1) {
+      let neighbours = [];
+      if (j > 0) {
+        neighbours.push({ x: i, y: j - 1 });
+        col[j - 1].neighbours.push({ x: i, y: j });
+      }
+      if (i > 0) {
+        graph[i - 1] = graph[i - 1].map((node, index) => {
+          if (getRandomInt(0, 4) === 0) {
+            neighbours.push({ x: i - 1, y: index });
+            return {
+              ...node,
+              neighbours: [...node.neighbours, { x: i, y: j }],
+            };
+          }
+          return node;
+        });
+      }
+      col.push({ x: i, y: j, neighbours, hasBomb: false });
+    }
+    graph.push(col);
+  }
+  if (!validateGraph(graph)) return generateGraph(numCols, minRows, maxRows);
+  return graph;
+}
+
 class App extends Component {
   constructor() {
     super();
     this.state = INITIAL_STATE;
   }
 
-  generateGraph(numCols, minRows, maxRows) {
-    let graph = [];
-    for (let i = 0; i < numCols; i += 1) {
-      let col = [];
-      const numRows = getRandomInt(minRows, maxRows);
-      for (let j = 0; j < numRows; j += 1) {
-        let neighbours = [];
-        if (j > 0) {
-          neighbours.push({ x: i, y: j - 1 });
-          col[j - 1].neighbours.push({ x: i, y: j });
-        }
-        if (i > 0) {
-          graph[i - 1] = graph[i - 1].map((node, index) => {
-            if (getRandomInt(0, 4) === 0) {
-              neighbours.push({ x: i - 1, y: index });
-              return {
-                ...node,
-                neighbours: [...node.neighbours, { x: i, y: j }],
-              };
-            }
-            return node;
-          });
-        }
-        col.push({ x: i, y: j, neighbours, hasBomb: false });
-      }
-      graph.push(col);
-    }
-    return graph;
-  }
 
   finishGame = () => {
     if (!this.state.secondGameStarted) {
@@ -170,7 +186,7 @@ class App extends Component {
 
   initialize = e => {
     e.preventDefault();
-    const newGraph = this.generateGraph(e.target.numCols.value, e.target.minRows.value, e.target.maxRows.value);
+    const newGraph = generateGraph(e.target.numCols.value, e.target.minRows.value, e.target.maxRows.value);
     this.setState({
       graph: newGraph,
       player1Name: e.target.player1Name.value,
