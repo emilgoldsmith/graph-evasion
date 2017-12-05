@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 import BoardCanvas from './Board.js';
 import Initialize from './Initialize.js';
+import TitleRule from './TitleRule.js';
 
 /* Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random */
 function getRandomInt(min, max) {
@@ -155,6 +156,7 @@ class App extends Component {
 
     return (
       <div className="App">
+        <TitleRule />
         {isInitialized
           ? <BoardCanvas
               graph={this.state.graph}
