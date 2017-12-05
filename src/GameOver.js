@@ -1,6 +1,6 @@
 import React from 'react';
 
-export default ({ player1Name, player2Name, player1Score, player2Score }) => {
+export default ({ player1Name, player2Name, player1Score, player2Score, reset }) => {
   const isDrawn = player1Score === player2Score;
   const winner = player1Score < player2Score ? player1Name : player2Name;
   let resultComponent;
@@ -19,6 +19,7 @@ export default ({ player1Name, player2Name, player1Score, player2Score }) => {
         {player2Name}: {player2Score}
       </div>
       {resultComponent}
+      <button onClick={reset}>Play Another Game</button>
     </div>
   );
 }

@@ -174,6 +174,27 @@ class App extends Component {
     });
   };
 
+  reset = () => {
+    this.setState({
+      graph: null,
+      hunterPos: null,
+      preyPos: null,
+      gameOver: false,
+      huntersTurn: true,
+      numBombs: 10,
+      numMoves: 0,
+      player1Name: null,
+      player2Name: null,
+      numCols: null,
+      minRows: null,
+      maxRows: null,
+      player1Score: 0,
+      player2Score: 0,
+      secondGameStarted: false,
+      intermediateState: false,
+    });
+  }
+
   render() {
     const isInitialized = (
       this.state.player1Name !== null &&
@@ -205,6 +226,7 @@ class App extends Component {
           player2Name={this.state.player2Name}
           player1Score={this.state.player1Score}
           player2Score={this.state.player2Score}
+          reset={this.reset}
         />
       );
     } else if (isInitialized) {
