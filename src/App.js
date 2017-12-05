@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import logo from './logo.svg';
 import './App.css';
 import BoardCanvas from './Board.js';
+import Initialize from './Initialize.js';
 
 /* Taken from https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random */
 function getRandomInt(min, max) {
@@ -13,19 +13,23 @@ function getRandomInt(min, max) {
 class App extends Component {
   constructor() {
     super();
-    const graph = this.generateGraph(10, 3, 7);
     this.state = {
-      graph,
-      hunterPos: { x: 0, y: 0 },
-      preyPos: { x: graph.length - 1, y: graph[graph.length - 1].length - 1 },
+      graph: null,
+      hunterPos: null,
+      preyPos: null,
       gameOver: false,
       huntersTurn: true,
       numBombs: 10,
-      numMoves: 0
+      numMoves: 0,
+      player1Name: null,
+      player2Name: null,
+      numCols: null,
+      minRows: null,
+      maxRows: null,
     };
   }
 
-  generateGraph = (numCols, minRows, maxRows) => {
+  generateGraph(numCols, minRows, maxRows) {
     let graph = [];
     for (let i = 0; i < numCols; i += 1) {
       let col = [];
@@ -52,7 +56,6 @@ class App extends Component {
       }
       graph.push(col);
     }
-    console.log(graph);
     return graph;
   }
 
@@ -121,22 +124,54 @@ class App extends Component {
     return true;
   }
 
+  initialize = e => {
+    e.preventDefault();
+    const newGraph = this.generateGraph(e.target.numCols.value, e.target.minRows.value, e.target.maxRows.value);
+    this.setState({
+      graph: newGraph,
+      player1Name: e.target.player1Name.value,
+      player2Name: e.target.player2Name.value,
+      numCols: e.target.numCols.value,
+      minRows: e.target.minRows.value,
+      maxRows: e.target.maxRows.value,
+      hunterPos: { x: 0, y: 0 },
+      preyPos: { x: newGraph.length - 1, y: newGraph[newGraph.length - 1].length - 1 },
+    });
+  };
+
   render() {
+    const isInitialized = (
+      this.state.player1Name !== null &&
+      this.state.player2Name !== null &&
+      this.state.numCols !== null &&
+      this.state.minRows !== null &&
+      this.state.maxRows !== null &&
+      this.state.graph !== null &&
+      this.state.hunterPos !== null &&
+      this.state.preyPos !== null
+    );
+
+    const currentPlayer = this.state.huntersTurn ? this.state.player1Name : this.state.player2Name;
+
     return (
       <div className="App">
-        <BoardCanvas
-          graph={this.state.graph}
-          hunterX={this.state.hunterPos.x}
-          hunterY={this.state.hunterPos.y}
-          preyX={this.state.preyPos.x}
-          preyY={this.state.preyPos.y}
-          makeMove={this.makeMove}
-          huntersTurn={this.state.huntersTurn}
-          gameOver={this.state.gameOver}
-          numBombs={this.state.numBombs}
-          numMoves={this.state.numMoves}
-          gameOver={this.state.gameOver}
-        />
+        {isInitialized
+          ? <BoardCanvas
+              graph={this.state.graph}
+              hunterX={this.state.hunterPos.x}
+              hunterY={this.state.hunterPos.y}
+              preyX={this.state.preyPos.x}
+              preyY={this.state.preyPos.y}
+              makeMove={this.makeMove}
+              huntersTurn={this.state.huntersTurn}
+              gameOver={this.state.gameOver}
+              numBombs={this.state.numBombs}
+              numMoves={this.state.numMoves}
+              gameOver={this.state.gameOver}
+              nameToPlay={currentPlayer}
+            />
+          : <Initialize initialize={this.initialize} />
+        }
       </div>
     );
   }

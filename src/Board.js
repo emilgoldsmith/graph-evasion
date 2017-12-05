@@ -144,6 +144,9 @@ class BoardCanvas extends Component {
               <span className="info-text">Moves made: { this.props.numMoves } </span>
             </span>
             <span className="info">
+              <span className="info-text">To Play: {this.props.nameToPlay}</span>
+            </span>
+            <span className="info">
               <span className="info-text">{ this.props.gameOver ? 'Game over' : 'Game in progess' } </span>
             </span>
           </div>
