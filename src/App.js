@@ -21,6 +21,7 @@ class App extends Component {
       gameOver: false,
       huntersTurn: true,
       numBombs: 10,
+      numMoves: 0
     };
   }
 
@@ -116,16 +117,13 @@ class App extends Component {
       return {};
     });
     this.setState(state => ({ huntersTurn: !state.huntersTurn }));
+    this.setState(state => ({ numMoves: state.numMoves + 1 }));
     return true;
   }
 
   render() {
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
         <BoardCanvas
           graph={this.state.graph}
           hunterX={this.state.hunterPos.x}
@@ -135,6 +133,8 @@ class App extends Component {
           makeMove={this.makeMove}
           huntersTurn={this.state.huntersTurn}
           gameOver={this.state.gameOver}
+          numBombs={this.state.numBombs}
+          numMoves={this.state.numMoves}
         />
       </div>
     );
