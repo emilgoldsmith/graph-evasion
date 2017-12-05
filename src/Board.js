@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 class BoardCanvas extends Component {
   constructor() {
     super();
-    this.basePX = 30;
     this.lineWidth = 1;
     this.colors = {
       bg : '#ffffff',
@@ -12,11 +11,16 @@ class BoardCanvas extends Component {
       p : '#0000ff',
       b : '#ff0000'
     };
-    this.font = `${this.basePX * 0.7}px Arial`;
   }
 
   componentDidMount() {
     this.dimension = this.props.graph.length;
+    // get appropriate basePX based on width
+    const scale = 0.9;
+    this.basePX = Math.floor(scale * window.innerWidth / (this.dimension * 3));
+    // set canvas size
+    this.canvas.width = this.basePX * this.dimension * 3;
+    this.canvas.height = this.basePX * this.dimension * 2;
     this.renderCanvas();
   }
 
@@ -83,9 +87,6 @@ class BoardCanvas extends Component {
     }
 
     const ctx = this.canvas.getContext('2d');
-    // set canvas size
-    this.canvas.width = this.basePX * this.dimension * 3;
-    this.canvas.height = this.basePX * this.dimension * 2;
     // draw background
     ctx.fillStyle = this.colors.bg;
     ctx.fillRect(0, 0, this.dimension * this.basePX * 2, this.dimension * this.basePX * 2);
@@ -99,7 +100,6 @@ class BoardCanvas extends Component {
       ctx.stroke();
     }
     // draw nodes
-    ctx.font = this.font;
     for (const node of nodes) {
       ctx.beginPath();
       const hunterColSize = this.props.graph[this.props.hunterX].length;
