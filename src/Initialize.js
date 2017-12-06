@@ -22,7 +22,7 @@ class Initialize extends Component {
 
   render() {
     return (
-      <form style={{display: 'flex', flexDirection: 'column'}} onSubmit={this.props.initialize}>
+      <form onSubmit={this.props.initialize}>
         Player 1 Name:
         <input
           type="text"

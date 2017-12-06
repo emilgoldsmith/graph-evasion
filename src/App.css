@@ -14,7 +14,19 @@
   font-weight: normal;
   line-height: 25px;
   padding: 5px;
-  margin: 0;
+  margin: 0 10%;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+form input {
+  padding: 5px;
+  margin: 10px 0;
 }
 
 .container, .info {
