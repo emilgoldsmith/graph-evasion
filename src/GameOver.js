@@ -11,7 +11,7 @@ export default ({ player1Name, player2Name, player1Score, player2Score, reset })
   }
 
   return (
-    <div>
+    <div className="gameResult">
       <div>
         {player1Name}: {player1Score}
       </div>

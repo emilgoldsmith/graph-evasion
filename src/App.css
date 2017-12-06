@@ -59,3 +59,21 @@ form input {
 .bomb {
   background: #ff0000;
 }
+
+.gameResult {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.gameResult div {
+  font-size: 20px;
+  line-height: 30px;
+  padding: 5px;
+}
+
+.gameResult button {
+  margin-top: 20px;
+  font-size: 16px;
+}
