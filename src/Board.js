@@ -123,7 +123,7 @@ class BoardCanvas extends Component {
   render() {
     return (
       <div>
-        <div className="container">
+        <div className="gameContainer">
           <span className="info">
             <span className="info-icon hunter"></span>
             <span className="info-text">Hunter ({this.props.hunterName})</span>
